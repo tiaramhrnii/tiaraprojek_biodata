@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:tiaraprojek/models/biodata/mbiodata.dart';
+import 'form_biodata.dart'; 
 
 class PageListBiodata extends StatefulWidget {
   const PageListBiodata({super.key});
@@ -14,7 +15,6 @@ class _PageListBiodataState extends State<PageListBiodata> {
   Future<List<MBiodata>> getBiodata() async {
     try {
       final response = await http.get(Uri.parse('http://localhost/biodata/list.php'));
-
       if (response.statusCode == 200) {
         return mBiodataFromJson(response.body);
       } else {
@@ -91,7 +91,6 @@ class _PageListBiodataState extends State<PageListBiodata> {
         body: {"id": id},
       );
       final data = jsonDecode(response.body);
-
       if (data['status'] == "success") {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Data berhasil dihapus")),
@@ -175,9 +174,26 @@ class _PageListBiodataState extends State<PageListBiodata> {
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Text("Email: ${item.email}\nKlik untuk detail..."),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
-                      onPressed: () => _confirmDelete(item.id.toString(), item.nama!),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            // PINDAH KE FORM DENGAN MEMBAWA DATA
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BiodataForm(item: item),
+                              ),
+                            ).then((value) => setState(() {}));
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
+                          onPressed: () => _confirmDelete(item.id.toString(), item.nama!),
+                        ),
+                      ],
                     ),
                     onTap: () => _showDetailBiodata(item),
                   ),
